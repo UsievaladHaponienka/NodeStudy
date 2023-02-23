@@ -1,38 +1,34 @@
-const EventEmitter = require('events');
-const eventEmitter = new EventEmitter();
+const readline = require('readline');
+const rl = readline.createInterface({input: process.stdin, output: process.stdout});
 
-// eventEmitter.on('tutorial', function (num1, num2) {
-//     console.log(num1 + num2)
-// })
-//
-// eventEmitter.emit('tutorial', 1, 2);
+let num1 = Math.floor((Math.random() * 10) + 1);
+let num2 = Math.floor((Math.random() * 10) + 1);
 
+let answer = num1 + num2;
 
-class Person extends EventEmitter {
-    constructor(name) {
-        super();
-        this._name = name
+rl.question(`What is ${num1} + ${num2}? \n`, function (userInput) {
+    // Set message for incorrect answer
+    rl.setPrompt('Incorrect response, try again \n');
+    if (userInput.trim() != answer) {
+        //print message for incorrect answer
+        rl.prompt();
+    } else {
+        // close if correct
+        rl.close();
     }
+    // This event is triggered when our app writes line in console, i.e. triggered by rl.prompt() method call
+    rl.on('line', (userInput) => {
+        if (userInput.trim() == answer) {
+            // close if correct
+            rl.close()
+        } else {
+            // rl.prompt writes line to console and triggers event 'line' which leads to infinite loop (that's what we want)
+            rl.prompt()
+        }
+    })
+});
 
-    get name() {
-        return this._name
-    }
-}
-
-//Create new object instance
-let pedro = new Person('Pedro');
-let christina = new Person('Christina');
-
-//Assign event with name `name`
-pedro.on('name', function () {
-    console.log('My name is ' + pedro.name)
-})
-
-christina.on('name', function () {
-    console.log('My name is ' + christina.name)
-})
-
-//Emit `name` event
-pedro.emit('name');
-christina.emit('name');
-
+// event triggered when rl.close method is called.
+rl.on('close', function () {
+    console.log('Correct!');
+});
