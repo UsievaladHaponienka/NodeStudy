@@ -1,34 +1,47 @@
-const readline = require('readline');
-const rl = readline.createInterface({input: process.stdin, output: process.stdout});
+const fs = require('fs');
 
-let num1 = Math.floor((Math.random() * 10) + 1);
-let num2 = Math.floor((Math.random() * 10) + 1);
-
-let answer = num1 + num2;
-
-rl.question(`What is ${num1} + ${num2}? \n`, function (userInput) {
-    // Set message for incorrect answer
-    rl.setPrompt('Incorrect response, try again \n');
-    if (userInput.trim() != answer) {
-        //print message for incorrect answer
-        rl.prompt();
+//create a file
+fs.writeFile('example.txt', 'This is an example', (err) => {
+    if (err) {
+        console.log(err)
     } else {
-        // close if correct
-        rl.close();
-    }
-    // This event is triggered when our app writes line in console, i.e. triggered by rl.prompt() method call
-    rl.on('line', (userInput) => {
-        if (userInput.trim() == answer) {
-            // close if correct
-            rl.close()
-        } else {
-            // rl.prompt writes line to console and triggers event 'line' which leads to infinite loop (that's what we want)
-            rl.prompt()
-        }
-    })
-});
+        console.log('file created!')
 
-// event triggered when rl.close method is called.
-rl.on('close', function () {
-    console.log('Correct!');
-});
+        // rename file
+        fs.rename('example.txt', 'example2.txt', (err) => {
+           if (err) {
+               console.log(err)
+           } else {
+               console.log('file renamed!')
+           }
+        });
+
+        // append data to file
+        fs.appendFile('example2.txt', '\nThis is appended part', (err) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log('file appended!')
+            }
+        })
+
+        // read file
+        fs.readFile('example2.txt', 'utf8', (err, file) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(file)
+            }
+        })
+
+        fs.unlink('example2.txt', (err) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log('file deleted!')
+            }
+        })
+    }
+})
+
+
